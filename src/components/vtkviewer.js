@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import '@kitware/vtk.js/Rendering/Profiles/Geometry';
 import vtkFullScreenRenderWindow from '@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow';
@@ -9,14 +8,15 @@ import axios from 'axios';
 import vtkColorTransferFunction from '@kitware/vtk.js/Rendering/Core/ColorTransferFunction';
 import vtkLookupTable from '@kitware/vtk.js/Common/Core/LookupTable';
 import vtkDataArray from '@kitware/vtk.js/Common/Core/DataArray';
+import vtkColorMaps from '@kitware/vtk.js/Rendering/Core/ColorTransferFunction/ColorMaps';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
 
-function VTKViewer() {
+function VTKViewer(value, annotation) {
   const [file, setFile] = useState(null);
   const vtkContainerRef = useRef(null);
   const context = useRef(null);
   const [colorByField, setColorByField] = useState('');
+  const [colorMapName, setColorMapName] = useState('Cool to Warm');
 
   const handleColorByFieldChange = (event) => {
     setColorByField(event.target.value);
@@ -33,45 +33,113 @@ function VTKViewer() {
       formData.append('file', file);
 
       const baseUrl = 'http://localhost:8000';
-      const uploadResponse = await axios.post(`${baseUrl}/upload`, formData, {
+      const uploadResponse = await axios.post(`${baseUrl}/model/upload-file-segment-downsampling-refined/`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
 
-      const vtpFileUrl = `${baseUrl}/vtp-file`;
+      const vtpFileUrl = `${baseUrl}/model/vtp-file`;
       visualizeVTPFile(vtpFileUrl);
     } catch (error) {
       console.error('Error visualizing VTP file:', error);
     }
   };
 
-  const applyColorBy = () => {
+const applyColorBy = () => {
+  const {polyData, mapper} = context.current;
 
-    const { polyData, mapper } = context.current;
-const labelArray = vtkDataArray.newInstance({
-  name: 'Label',
-  values: polyData.getPointData().getArrayByName('Label').getData(),
-});
-polyData.getPointData().setScalars(labelArray);
+  const labelArray = vtkDataArray.newInstance({
+    name: 'Label',
+    values: polyData.getPointData().getArrayByName('Label').getData(),
+  });
+  polyData.getPointData().setScalars(labelArray);
 
+  const lookupTable = vtkLookupTable.newInstance();
+  lookupTable.setNumberOfColors(15); // Set the number of colors to match the number of classes
+  lookupTable.build();
 
-    const lookupTable = vtkLookupTable.newInstance();
-    lookupTable.setHueRange(0.667, 0.0); // Set the hue range for the color map
+  const colorTransferFunction = vtkColorTransferFunction.newInstance();
+  colorTransferFunction.setMappingRange(polyData.getPointData().getScalars().getRange());
+  colorTransferFunction.updateRange();
 
-    const colorTransferFunction = vtkColorTransferFunction.newInstance();
-    colorTransferFunction.setMappingRange(polyData.getPointData().getScalars().getRange());
-    colorTransferFunction.updateRange();
+  const colorMap = vtkColorMaps.getPresetByName('Cool to Warm');
+  const table = [];
 
-    lookupTable.applyColorMap(colorTransferFunction);
+  for (let i = 0; i < colorMap.RGBPoints.length; i += 4) {
+    const r = colorMap.RGBPoints[i];
+    const g = colorMap.RGBPoints[i + 1];
+    const b = colorMap.RGBPoints[i + 2];
+    const x = colorMap.RGBPoints[i + 3];
+    table.push(x, r, g, b);
+  }
 
-    mapper.setLookupTable(lookupTable);
-    mapper.setScalarModeToUsePointData();
-    mapper.selectColorArray(colorByField, 'default');
-    mapper.setColorBy(colorByField);
+  const colors = [
+    [1.0, 1.0, 1.0], // Class 0 (background) is white
+    [0.0, 0.0, 1.0], // Class 1 is blue
+    [0.0, 1.0, 0.0], // Class 2 is green
+    [1.0, 1.0, 0.0], // Class 3 is yellow
+    [1.0, 0.0, 1.0], // Class 4 is magenta
+    [0.5, 0.0, 0.5], // Class 5 is purple
+    [0.0, 0.5, 0.5], // Class 6 is teal
+    [0.5, 0.5, 0.0], // Class 7 is olive
+    [1.0, 0.0, 0.0], // Class 8 is red
+    [0.5, 0.5, 0.5], // Class 9 is gray
+    [0.0, 1.0, 1.0], // Class 10 is cyan
+    [0.5, 0.0, 0.0], // Class 11 is dark red
+    [0.5, 1.0, 0.0],
+    [0.5, 0.5, 1.0],
+    [0.5, 0.0, 1.0]
+  ]
+//   lookupTable.setTable(table);
+//   lookupTable.setAnnotation(colors, annotation);
+//
+//   mapper.setLookupTable(lookupTable);
+//   mapper.setScalarModeToUsePointData();
+//   mapper.selectColorArray('Label', 'default');
+//   mapper.setColorBy('Label');
+//
+//   context.current.fullScreenRenderer.render();
+// };
 
-    context.current.fullScreenRenderer.render();
-  };
+  const annotation = ['Background', 'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 'Class 11', 'Class 12', 'Class 13', 'Class 14'];
+  lookupTable.setTable(table);
+  lookupTable.setAnnotation(colors, annotation);
+
+  mapper.setLookupTable(lookupTable);
+  mapper.setScalarModeToUsePointData();
+  mapper.setUseLookupTableScalarRange(true);
+  mapper.selectColorArray('Label', 'default');
+  mapper.setColorBy('Label');
+
+  context.current.fullScreenRenderer.render();
+};
+
+//   const applyColorBy = () => {
+//   const { polyData, mapper } = context.current;
+//
+//   const labelArray = vtkDataArray.newInstance({
+//     name: 'Label',
+//     values: polyData.getPointData().getArrayByName('Label').getData(),
+//   });
+//   polyData.getPointData().setScalars(labelArray);
+//
+//   const lookupTable = vtkLookupTable.newInstance();
+//   lookupTable.setHueRange(0.667, 0.0); // Set the hue range for the color map
+//
+//   const colorTransferFunction = vtkColorTransferFunction.newInstance();
+//   colorTransferFunction.setMappingRange(polyData.getPointData().getScalars().getRange());
+//   colorTransferFunction.updateRange();
+//
+//   lookupTable.applyColorMap(colorTransferFunction);
+//
+//   mapper.setLookupTable(lookupTable);
+//   mapper.setScalarModeToUsePointData();
+//   mapper.selectColorArray('Label', 'default');
+//   mapper.setColorBy('Label');
+//
+//   context.current.fullScreenRenderer.render();
+// };
 
   const visualizeVTPFile = (vtpFileUrl) => {
     const fullScreenRenderer = vtkFullScreenRenderWindow.newInstance({
@@ -130,10 +198,9 @@ polyData.getPointData().setScalars(labelArray);
     };
   }, []);
 
-
   return (
-    <div >
-      <div  ref={vtkContainerRef} />
+    <div>
+      <div ref={vtkContainerRef} />
       <table
         style={{
           position: 'absolute',
@@ -146,8 +213,7 @@ polyData.getPointData().setScalars(labelArray);
         <tbody>
           <tr>
             <td>
-              <input type="file" accept=".vtp" onChange={handleFileChange}  />
-
+              <input type="file" accept=".vtp" onChange={handleFileChange} />
             </td>
           </tr>
           <tr>
@@ -157,7 +223,7 @@ polyData.getPointData().setScalars(labelArray);
           </tr>
           <tr>
             <td>
-              <button type="button" onClick={handleVisualize}>
+              <button type="button"  className="display-button" onClick={handleVisualize}>
                 Predict
               </button>
             </td>

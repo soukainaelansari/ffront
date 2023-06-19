@@ -19,6 +19,7 @@
     "fflate": "^0.8.0",
     "file-saver": "^2.0.5",
     "http-proxy-middleware": "^2.0.6",
+    "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.4",
     "react-bootstrap-icons": "^1.10.3",

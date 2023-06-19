@@ -1,7 +1,5 @@
 import meter1 from "../assets/img/image_2023-06-07_214651819-removebg-preview.png";
 import meter2 from "../assets/img/image_2023-06-07_214940253-removebg-preview.png";
-import meter3 from "../assets/img/image_2023-06-07_220935326-removebg-preview.png";
-import meter4 from "../assets/img/image_2023-06-07_222319446-removebg-preview.png";
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import arrow1 from "../assets/img/arrow1.svg";
@@ -36,19 +34,13 @@ export const About = () => {
                 <div className="col-12">
                     <div className="skill-bx wow zoomIn">
                         <h2>About Us</h2>
-                        <p>We are alums of ENSA FES , EMSI and FST tanger,interns at 3D Smart Factory. We are enthusiasts for all things digital - big believers in technology’s potential and even bigger believers in human potential.</p>
+                        <p>We are alums of ENSA FES ,interns at 3D Smart Factory. We are enthusiasts for all things digital - big believers in technology’s potential and even bigger believers in human potential.</p>
                           <h2>Team</h2>
-                        <Carousel responsive={responsive} infinite={true} className="owl-carousel owl-theme skill-slider">
-
+                        <Carousel responsive={responsive} infinite={true} className="hello">
                             <div className="item">
 
                                 <img src={meter1} alt="Image" />
                                 <h5>ELANSARI Soukaina</h5>
-                                <p>Front-end developer</p>
-                            </div>
-                            <div className="item2">
-                                <img src={meter4} alt="Image" />
-                                <h5>Goni Boulama Ahmed</h5>
                                 <p>Front-end developer</p>
                             </div>
 
@@ -56,11 +48,6 @@ export const About = () => {
                                 <img src={meter2} alt="Image" />
                                 <h5>AAMAROUCHI Oumaima</h5>
                                 <p>Back-end developer</p>
-                            </div>
-                            <div className="item">
-                                <img src={meter3} alt="Image" />
-                                <h5> MECHHEDAN INSAFE </h5>
-                                <p>Backend-end developer</p>
                             </div>
                         </Carousel>
                     </div>

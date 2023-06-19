@@ -329,12 +329,18 @@ background-image: url('./assets/img/HD-wallpaper-plain-purple-background-purple.
   width: 90%;
   margin: 0 auto;
   position: relative;
-
+}
+.hello{
+  width: 90%;
+  position: relative;
+    margin-left:324px;
 }
 .skill-slider .item img {
   width: 95%;
   margin: 0 auto 15px auto;
+
 }
+
 .skill-slider .item1 img {
   width: 51%;
   margin: 0 auto 15px auto;
@@ -549,12 +555,13 @@ i {
   background: linear-gradient(90.21deg, #AA367C -5.91%, #4A2FBD 111.58%);
   color: #FFFFFF;
   border-radius: 10px;
-  font-size: 20px;
+  font-size: 21px;
   cursor: pointer;
     font-weight: bold;
     justify-content: center;
         align-items: center;
-    margin-left: 250px;
+    margin-left:350px;
+
 
 
 

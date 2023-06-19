@@ -12,7 +12,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
-
 function App() {
   const [fileType, setFileType] = useState('');
   const [fileUploaded, setFileUploaded] = useState(false);
@@ -65,7 +64,7 @@ function App() {
         {fileType === '3D' && <ThreeScene />}
         {fileType === 'VTK' && <VTKViewer />}
       </section>
-      {/* ... */}
+
         <About />
          <Contact />
         <Footer />

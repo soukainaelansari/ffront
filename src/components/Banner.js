@@ -55,7 +55,7 @@ export const Banner = () => {
               {({ isVisible }) =>
               <div className={isVisible ? "animate__animated animate__fadeIn" : ""}>
                 <span className="tagline">Welcome Doctor!</span>
-                <h1>{`Let's build somthing amazing `} <span className="txt-rotate" dataPeriod="1000" data-rotate='[" with TeethSeg"]'><span className="wrap">{text}</span></span></h1>
+                <h1>{`Let's build something amazing `} <span className="txt-rotate" dataPeriod="1000" data-rotate='[" with TeethSeg"]'><span className="wrap">{text}</span></span></h1>
                   <p>The best of automated end-to-end 3D teeth segmentation approach. Your 3D models, well used, will allow us to do great things, let us take care of it.</p>
                   <button onClick={() => console.log('connect')}>Let’s Connect <ArrowRightCircle size={25} /></button>
               </div>}
